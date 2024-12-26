@@ -7,7 +7,7 @@ load_dotenv()
 
 
 MODEL_NAME : str = "mistral-large2"
-#os.chdir("../../")
+os.chdir("../../")
 SNOWFLAKE_ACCOUNT : str =   os.environ.get("SNOWFLAKE_ACCOUNT")
 CONNECTION_PARAMS : ClassVar[dict[str]] = {
   "account":  os.environ.get("SNOWFLAKE_ACCOUNT"),

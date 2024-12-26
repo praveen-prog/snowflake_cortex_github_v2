@@ -33,6 +33,16 @@ def open_dashboard():
     url = f"http://{server_name}:8502"
     webbrowser.open_new_tab(url)
 
+def find_replace_in_file(file_path, old_string, new_string):
+    try:
+        with open(file_path, 'r') as file:
+            file_content = file.read()
+        file_content = file_content.replace(old_string, new_string)
+        with open(file_path, 'w') as file:
+            file.write(file_content)
+    except Exception as e:
+            raise snowflakecortexerror(e,sys)   
+
 def print_selected_repository(repo):
     try:
         """Print the selected repository."""
@@ -40,16 +50,40 @@ def print_selected_repository(repo):
         selected_owner_name = repo_link[4]
         selected_repo_name = repo_link[5]
         selected_branch_name = repo_link[7]
-        #subprocess.run("cp","src/constants/__init__orig.py","src/constants/__init__tmp2.py")
         
-        #source_file = os.path.join(os.getcwd(),"src/constants/__init__orig.py")
-        #print(f"Source directory is {source_file}")
-        #destination_file = os.path.join(os.getcwd(),"src/constants/__init__tmp2.py")
-        #subprocess.run(["cp", source_file, destination_file])
-        st.write(f"Selected Owner Name: {selected_owner_name}")
-        st.write(f"Selected Repo Name: {selected_repo_name}")
-        st.write(f"Selected Branch Name: {selected_branch_name}")
-        st.write(f"Selected Repository: {repo}")
+        source_file = os.path.join(os.getcwd(),"src/constants/__init__orig.py")
+        print(f"Source directory is {source_file}")
+        destination_file = os.path.join(os.getcwd(),"src/constants/__init__tmp2.py")
+        subprocess.run(["cp", source_file, destination_file])
+        logging.info(f"File copy completed successfully to {destination_file}")
+        logging.info("Creating new Temp file Constants file for rep link")    
+        old_string = "https://api.github.com/repos/praveen-prog/docs/branches/main"
+        new_string = repo
+        find_replace_in_file(destination_file, old_string, new_string)
+        logging.info("Created new Temp file Constants file for rep link")
+
+        logging.info("Creating new Temp file Constants file for rep owner")    
+        old_string = "praveen-prog"
+        new_string = selected_owner_name
+        find_replace_in_file(destination_file, old_string, new_string)
+        logging.info("Created new Temp file Constants file for rep owner")     
+
+        logging.info("Creating new Temp file Constants file for repo name")    
+        old_string = "docs"
+        new_string = selected_repo_name
+        find_replace_in_file(destination_file, old_string, new_string)
+        logging.info("Created new Temp file Constants file for repo name")      
+
+        logging.info("Creating new Temp file Constants file for branch name")    
+        old_string = "main"
+        new_string = selected_branch_name
+        find_replace_in_file(destination_file, old_string, new_string)
+        logging.info("Created new Temp file Constants file for branch name")    
+
+        st.write(f"Owner Name: {selected_owner_name}")
+        st.write(f"Repo Name: {selected_repo_name}")
+        st.write(f"Branch Name: {selected_branch_name}")
+        st.write(f"Repository: {repo}")
                  
     except Exception as e:
             raise snowflakecortexerror(e,sys)           
@@ -199,7 +233,9 @@ def main():
         "github.com/user/repo2",
         "github.com/user/repo3",
         "github.com/user/repo4",
-        "https://api.github.com/repos/praveen-prog/docs/branches/main"
+        "https://api.github.com/repos/praveen-prog/docs/branches/main",
+        "https://api.github.com/repos/praveen-prog/reltiosqlchatbot/branches/main",
+        "https://api.github.com/repos/praveen-prog/prisma-cloud-devsecops-workshop/branches/main"
     ]
 
     if "show_chatbot" not in st.session_state:
@@ -215,7 +251,7 @@ def main():
             print_selected_repository(selected_repo)
             logging.info(f"Selected repository is {selected_repo}")
 
-        if st.button("Enter Here"):
+        if st.button("Proceed"):
             st.session_state.show_chatbot = True
             st.rerun()
     else:
