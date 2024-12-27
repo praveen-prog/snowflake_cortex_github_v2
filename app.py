@@ -35,8 +35,10 @@ def open_dashboard():
     """Generate a link to the dashboard dynamically."""
     base_url = get_base_url()
     dashboard_url = f"{base_url}/dashboard"  # Adjust if your app uses subpaths
-    st.markdown(f"[Open Dashboard]({dashboard_url})", unsafe_allow_html=True)
-    webbrowser.open_new_tab(dashboard_url)
+    st.markdown(
+        f'<a href="{dashboard_url}" target="_blank">Open Dashboard</a>',
+        unsafe_allow_html=True
+    )
 
 
 
