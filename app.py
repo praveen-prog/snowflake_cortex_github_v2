@@ -30,7 +30,7 @@ def get_training_pipeline():
 def open_dashboard():
     """Open a new tab with the dashboard on port 8502"""
     server_name = socket.gethostname()
-    url = f"http://{server_name}:8502"
+    url = f"https://{server_name}:8502"
     webbrowser.open_new_tab(url)
 
 def find_replace_in_file(file_path, old_string, new_string):
