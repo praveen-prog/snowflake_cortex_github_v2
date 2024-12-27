@@ -173,7 +173,7 @@ class CortexSearchRetriever:
             print(f" Leadeboard is  : {tru_session.get_leaderboard()}")
             
             #tru_session.reset_database()   
-            tru_session.run_dashboard(address='https://dev-chat-bot-v2.streamlit.app/dashboard')   
+            tru_session.run_dashboard(address='https://dev-chat-bot-v2.streamlit.app')   
                  
             return result
         except Exception as e:
