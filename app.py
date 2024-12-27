@@ -14,7 +14,9 @@ from src.entity.config_entity import SetUpConfig
 from src.entity.artifacts_entity import DataIngestionArtifact
 from src.data_ingestion import DataIngestionClass
 from src.training_pipeline import TrainingPipeline
+from trulens_eval import TruCustomApp,TruChain, Huggingface, Tru
 
+tru = Tru()
 # Set page configuration
 st.set_page_config(
     page_title="Code Analysis Chatbot",
@@ -34,7 +36,7 @@ def get_base_url():
 def open_dashboard():
     """Generate a link to the dashboard dynamically."""
     base_url = get_base_url()
-    dashboard_url = f"{base_url}/dashboard"  # Adjust if your app uses subpaths
+    dashboard_url = tru.run_dashboard() # Adjust if your app uses subpaths
     st.markdown(
         f'<a href="{dashboard_url}" target="_blank">Open Dashboard</a>',
         unsafe_allow_html=True
