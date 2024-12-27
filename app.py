@@ -14,9 +14,7 @@ from src.entity.config_entity import SetUpConfig
 from src.entity.artifacts_entity import DataIngestionArtifact
 from src.data_ingestion import DataIngestionClass
 from src.training_pipeline import TrainingPipeline
-from trulens_eval import TruCustomApp,TruChain, Huggingface, Tru
 
-tru = Tru()
 # Set page configuration
 st.set_page_config(
     page_title="Code Analysis Chatbot",
@@ -29,20 +27,11 @@ def get_training_pipeline():
     """Initialize the TrainingPipeline object and cache it to prevent multiple sessions."""
     return TrainingPipeline()
 
-def get_base_url():
-    """Retrieve the base URL from secrets."""
-    return st.secrets.get("base_url", "http://localhost:8501")  # Default to localhost
-
 def open_dashboard():
-    """Generate a link to the dashboard dynamically."""
-    base_url = get_base_url()
-    dashboard_url = tru.run_dashboard(address='https://dev-chat-bot-v2.streamlit.app/dashboard') # Adjust if your app uses subpaths
-    st.markdown(
-        f'<a href="{dashboard_url}" target="_blank">Open Dashboard</a>',
-        unsafe_allow_html=True
-    )
-
-
+    """Open a new tab with the dashboard on port 8502"""
+    server_name = socket.gethostname()
+    url = f"http://{server_name}:8502"
+    webbrowser.open_new_tab(url)
 
 def find_replace_in_file(file_path, old_string, new_string):
     try:
