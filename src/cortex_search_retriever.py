@@ -1,5 +1,6 @@
 import os
 import sys
+import pandas 
 from dotenv import load_dotenv
 from src.logger import logging
 from src.exception import snowflakecortexerror
@@ -171,9 +172,15 @@ class CortexSearchRetriever:
                     result = rag.query(prompt)
                     print(result)
             print(f" Leadeboard is  : {tru_session.get_leaderboard()}")
+
+            df = tru_session.get_leaderboard()
+            html_table = df.to_html(classes='table-stripped',header=True,justify='center')
+        
+            with open("src/templates/sample.html","w") as f:
+                f.write((html_table))
             
             #tru_session.reset_database()   
-            tru_session.run_dashboard(port=8502)   
+            #tru_session.run_dashboard(port=8502)   
                  
             return result
         except Exception as e:

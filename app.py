@@ -28,10 +28,39 @@ def get_training_pipeline():
     return TrainingPipeline()
 
 def open_dashboard():
-    """Open a new tab with the dashboard on port 8502"""
-    server_name = socket.gethostname()
-    url = f"http://{server_name}:8502"
-    webbrowser.open_new_tab(url)
+    """Render the HTML dashboard in the current tab."""
+    #st.title("Dashboard Viewer")
+    st.markdown(
+        """
+        <style>
+        .centered-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+        .dashboard-container {
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    
+    # Main content
+    st.markdown("<div class='centered-content'>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='dashboard-container'>"
+        "<h3>Tru Lens Feedback Dashboard</h3>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+    # Rendering the HTML in the current tab
+    st.html("src/templates/sample.html")
+    st.markdown("</div>", unsafe_allow_html=True)
 
 def find_replace_in_file(file_path, old_string, new_string):
     try:
