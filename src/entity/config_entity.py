@@ -10,6 +10,10 @@ TIMESTAMP: str = datetime.now().strftime("%m_%d_%Y_%H_%M_%S")
 @dataclass
 class SetUpConfig:
     MODEL_NAME :  str = MODEL_NAME
+    EMBEDDING_MODEL_NAME : str = EMBEDDING_MODEL_NAME
+    RAG_APP_ID : str = RAG_APP_ID
+    RAG_APP_VERSION : str = RAG_APP_VERSION
+    REPOSITORY_LIST : ClassVar[list[str]] = REPOSITORY_LIST
     SNOWFLAKE_ACCOUNT : str = SNOWFLAKE_ACCOUNT
     CONNECTION_PARAMS : ClassVar[dict[str]] = CONNECTION_PARAMS
     GITHUB_TOKEN : str = GITHUB_TOKEN

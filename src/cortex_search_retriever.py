@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from src.logger import logging
 from src.exception import snowflakecortexerror
 from src.entity.config_entity import SetUpConfig
+from src.prompt import *
 #from src.entity.artifacts_entity import  DataProcessingArtifact
 from snowflake.core import Root
 from typing import List
@@ -100,9 +101,7 @@ class CortexSearchRetriever:
         setupconfig = SetUpConfig()
         self.model_name = setupconfig.MODEL_NAME
         prompt = f"""
-          You are an expert assistant extracting information from context provided.
-          Answer the question based on the context. Be concise and do not hallucinate.
-          If you don't have the information just say so.
+          {chatbot_system_prompt}
           Context: {context_str}
           Question:
           {query}
@@ -126,6 +125,8 @@ class CortexSearchRetriever:
             setupconfig = SetUpConfig()
             self.model_name = setupconfig.MODEL_NAME
             snowpark_session = self.snowpark_session
+            self.rag_app_id = setupconfig.RAG_APP_ID
+            self.rag_app_version = setupconfig.RAG_APP_VERSION
             tru_snowflake_connector = SnowflakeConnector(snowpark_session=snowpark_session)
             tru_session = TruSession(connector=tru_snowflake_connector)
             logging.info("tru session created successfully")
@@ -164,7 +165,8 @@ class CortexSearchRetriever:
                     ]        
                 
             tru_rag = TruCustomApp(rag,
-                app_id = 'RAG Code Analysis Bot v4',
+                app_id = self.rag_app_id ,
+                app_version = self.rag_app_version,
                 feedbacks = [f_groundedness, f_answer_relevance, f_context_relevance])  
              
             with tru_rag as recording:
@@ -174,10 +176,38 @@ class CortexSearchRetriever:
             print(f" Leadeboard is  : {tru_session.get_leaderboard()}")
 
             df = tru_session.get_leaderboard()
-            html_table = df.to_html(classes='table-stripped',header=True,justify='center')
+            # Generate the HTML table
+            html_table = df.to_html(
+                classes='table table-striped table-bordered table-hover',
+                header=True,
+                justify='center',
+                border=0
+            )
+
+            # Add the enhanced HTML structure
+            html_document = f"""
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+                <title>Leaderboard</title>
+            </head>
+            <body>
+                <div class="container mt-5">
+                    <h3 class="text-center">Summary</h3>
+                    <div class="table-responsive">
+                        {html_table}
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+
         
             with open("src/templates/sample.html","w") as f:
-                f.write((html_table))
+                f.write((html_document))
             
             #tru_session.reset_database()   
             #tru_session.run_dashboard(port=8502)   

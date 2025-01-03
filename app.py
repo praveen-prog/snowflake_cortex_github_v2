@@ -59,8 +59,14 @@ def open_dashboard():
         unsafe_allow_html=True,
     )
     # Rendering the HTML in the current tab
-    st.html("src/templates/sample.html")
-    st.markdown("</div>", unsafe_allow_html=True)
+    if os.path.exists("src/templates/sample.html"):
+
+        st.html("src/templates/sample.html")
+        st.markdown("</div>", unsafe_allow_html=True)
+    else:
+        st.warning("Please enter the question/perform referesh")
+
+    
 
 def find_replace_in_file(file_path, old_string, new_string):
     try:
@@ -257,34 +263,42 @@ def chatbot_page():
                 st.rerun()
 
 def main():
-    sample_repositories = [
-        "github.com/user/repo1",
-        "github.com/user/repo2",
-        "github.com/user/repo3",
-        "github.com/user/repo4",
-        "https://api.github.com/repos/praveen-prog/docs/branches/main",
-        "https://api.github.com/repos/praveen-prog/reltiosqlchatbot/branches/main",
-        "https://api.github.com/repos/praveen-prog/prisma-cloud-devsecops-workshop/branches/main"
-    ]
+    try: 
+        setupconfig = SetUpConfig()
+        repository_list = setupconfig.REPOSITORY_LIST
+        
+        sample_repositories = repository_list
 
-    if "show_chatbot" not in st.session_state:
-        st.session_state.show_chatbot = False
+        if "show_chatbot" not in st.session_state:
+            st.session_state.show_chatbot = False
+        
+        if "repository_confirmed" not in st.session_state:
+            st.session_state.repository_confirmed = False    
 
-    if not st.session_state.show_chatbot:
-        st.title("Welcome to the Source Code Analysis Chatbot")
-        st.write("Explore insights and ask questions about your source code.")
+        if not st.session_state.show_chatbot:
+            st.title("Welcome to the Source Code Analysis Chatbot")
+            st.write("Explore insights and ask questions about your source code.")
 
-        selected_repo = st.selectbox("Select a Sample Repository:",sample_repositories,index=None, placeholder="Select a repository" , key="repo_selector")
+            selected_repo = st.selectbox("Select a Sample Repository:",sample_repositories,index=None, placeholder="Select a repository" , key="repo_selector")
 
-        if st.button("Confirm Repository"):
-            print_selected_repository(selected_repo)
-            logging.info(f"Selected repository is {selected_repo}")
+            if st.button("Confirm Repository"):
+                if selected_repo:  # Ensure a repository is selected
+                    st.session_state.repository_confirmed = True
+                    logging.info(f"Selected repository is {selected_repo}")
+                    print_selected_repository(selected_repo)
+                    #st.success(f"Selected repository is {selected_repo}")
 
-        if st.button("Proceed"):
-            st.session_state.show_chatbot = True
-            st.rerun()
-    else:
-        chatbot_page()
+            if st.button("Proceed"):
+                if st.session_state.repository_confirmed:
+                    subprocess.run(["rm","src/templates/sample.html"])
+                    st.session_state.show_chatbot = True
+                    st.rerun()
+                else:
+                    st.warning("Please confirm the repository before proceeding.")
+        else:
+            chatbot_page()
+    except Exception as e:
+            raise snowflakecortexerror(e,sys)          
 
 if __name__ == "__main__":
     main()

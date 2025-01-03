@@ -16,11 +16,14 @@ class DataProcessingClass:
         except Exception as e:
             raise snowflakecortexerror(e,sys)      
 
-    def semantic_splitting(self,) ->  DataProcessingArtifact:
+    def semantic_splitting(self,setupconfig : SetUpConfig = SetUpConfig()) ->  DataProcessingArtifact:
         try:
-            data_ingestion_artifact = self.data_ingestion_artifact    
+            self.setupconfig = setupconfig
+            data_ingestion_artifact = self.data_ingestion_artifact 
+            self.embedding_model_name = setupconfig.EMBEDDING_MODEL_NAME
+            logging.info(f"Emebedding model used is {self.embedding_model_name}")   
             #logging.info(f"Data ingestion artifact is BBBBB: {data_ingestion_artifact}")    
-            embed_model = HuggingFaceEmbedding("Snowflake/snowflake-arctic-embed-m")
+            embed_model = HuggingFaceEmbedding(self.embedding_model_name)
 
             splitter = SemanticSplitterNodeParser(
             buffer_size=1, breakpoint_percentile_threshold=85, embed_model=embed_model
